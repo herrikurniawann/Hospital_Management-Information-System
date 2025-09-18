@@ -1,14 +1,24 @@
 import { React, useState} from 'react';
-import { supabase } from "./supabaseClient";
+import { supabase } from '../supabase/supabaseClient';
 
 export default function UserLogin() {
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState(null)
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    if (error) setError(error.message)
+  }
 
   return (
     <>
       <div className="flex min-h-screen bg-gradient-to-br from-[#00a7ff] to-[#ffffff] items-center justify-center p-4">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+        <form onSubmit={handleLogin} className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
           {/* Header */}
           <h1 className="text-2xl font-bold text-center text-[#00a7ff]">
             Hospital Management System
@@ -21,17 +31,17 @@ export default function UserLogin() {
           <form className="mt-6 space-y-4">
             <div>
               <label
-                htmlFor="username"
+                htmlFor="email"
                 className="block text-sm font-medium text-gray-600"
               >
-                Username
+                Email
               </label>
               <input
                 type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Masukkan username atau username"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Masukkan email atau email"
                 className="mt-1 w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00a7ff] focus:border-[#00a7ff]"
               />
             </div>
@@ -80,9 +90,8 @@ export default function UserLogin() {
           <p className="mt-6 text-center text-sm text-gray-500">
             © 2025 Hospital Management System
           </p>
-        </div>
+        </form>
       </div>
-      );
     </>
   );
 }
